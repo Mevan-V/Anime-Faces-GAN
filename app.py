@@ -10,7 +10,12 @@ st.markdown("<p style='text-align: center'>Click the button to generate random a
 
 # === Generator Setup ===
 
-generator = model.ImageGenerator()
+@st.cache_resource
+def load_generator():
+    generator = model.ImageGenerator()
+    return generator
+
+generator = load_generator()
 
 # Initial image when the website loads
 img_bool = True
@@ -33,11 +38,11 @@ with col2:
 if img_bool:
 
     # Generate the image
-    img = generator.generate()
+    st.session_state.img = generator.generate()
 
     # Show the image using html to make the image cenetred
     st.markdown(
-        f"""<div style="text-align: center;"><img src="data:image/jpeg;base64,{img}" style="border-radius: 5%; border: 4px solid #888;" width="256"></div>""",
+        f"""<div style="text-align: center;"><img src="data:image/jpeg;base64,{st.session_state.img}" style="border-radius: 5%; border: 4px solid #888;" width="256"></div>""",
         unsafe_allow_html=True
     )
 
