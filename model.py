@@ -164,8 +164,8 @@ class ImageGenerator:
         self.C = Critic()
 
         # Create the model save file paths
-        gen_path = os.path.join(r".\Models", gen_file)
-        critic_path = os.path.join(r".\Models", critic_file)
+        gen_path = os.path.join("Models", gen_file)
+        critic_path = os.path.join("Models", critic_file)
 
         # Load the parameters of the models
         self.G.load_state_dict(torch.load(gen_path, map_location=torch.device('cpu')))

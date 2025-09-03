@@ -2,7 +2,7 @@
 
 Generation of anime faces using WGAN-GP.
 
-[Try it yourself](www.fakeLink.com)
+[Try it yourself](https://anime-face-generator-64.streamlit.app)
 
 ## Overview
 
