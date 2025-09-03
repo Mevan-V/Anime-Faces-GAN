@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import numpy as np
-import os, io, base64
+import os, io, base64, gc
 from PIL import Image
 
 # Custom weights initialization
@@ -177,22 +177,30 @@ class ImageGenerator:
     
     def generate(self, latent_dim=100):
 
-        # Create multiples noises for the model        
-        noise = torch.randn(100, latent_dim, dtype=torch.float32)
+        with torch.no_grad():
 
-        # Generate the images and get their scores
-        images = self.G(noise)
-        scores = self.C(images)
+            # Create multiples noises for the model        
+            noise = torch.randn(100, latent_dim, dtype=torch.float32)
 
-        # Get the image that has the low score of all (low score = better)
-        idx = torch.argmin(scores)
-        print(scores[idx])
+            # Generate the images and get their scores
+            images = self.G(noise).cpu()
+            scores = self.C(images).cpu()
+            del noise
 
-        # Convert the image into (H, W, C) format and turn it into numpy array for formatting
-        image = images[idx].detach().permute(1, 2, 0).numpy()
+            # Get the image that has the low score of all (low score = better)
+            idx = torch.argmin(scores).item()
+            print(scores[idx].item())
+            del scores
 
-        # convert the image range from (-1, 1) to (0, 255)
-        image = ((image + 1) / 2) * 255
+            # Convert the image into (H, W, C) format and turn it into numpy array for formatting
+            image = images[idx].detach().permute(1, 2, 0).numpy()
+            del images, idx
 
-        # Convert the images to base64 to display
-        return format_images(image)
+            # convert the image range from (-1, 1) to (0, 255)
+            image = (((image + 1) / 2) * 255).astype(np.uint8)
+
+            # Garbage collection
+            gc.collect()
+
+            # Convert the images to base64 to display
+            return format_images(image)

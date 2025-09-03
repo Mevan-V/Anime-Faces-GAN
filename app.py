@@ -1,5 +1,6 @@
 import streamlit as st
 import model
+import psutil, os, sys
 
 # === Website Setup ===
 
@@ -18,7 +19,9 @@ def load_generator():
 generator = load_generator()
 
 # Initial image when the website loads
-img_bool = True
+if "img" not in st.session_state:
+    with st.spinner("Generating face..."):
+        st.session_state.img = generator.generate()
 
 # ==== UI Setup ===
 
@@ -28,27 +31,21 @@ with col2:
     if st.button("Generate image", use_container_width=True):
         
         # Generate new image
-        img_bool = True
+        with st.spinner("Generating face..."):
+            st.session_state.img = generator.generate()
 
-    # For extra gap
-    for _ in range(2):
-        st.write("")
+# === Update image ===
 
-# To render the image only once
-if img_bool:
-
-    # Generate the image
-    st.session_state.img = generator.generate()
-
-    # Show the image using html to make the image cenetred
-    st.markdown(
-        f"""<div style="text-align: center;"><img src="data:image/jpeg;base64,{st.session_state.img}" style="border-radius: 5%; border: 4px solid #888;" width="256"></div>""",
-        unsafe_allow_html=True
-    )
+# Show the image using html to make the image cenetred
+st.markdown(
+    f"""<div style="text-align: center;"><img src="data:image/jpeg;base64,{st.session_state.img}" style="border-radius: 5%; border: 4px solid #888;" width="256"></div>""",
+    unsafe_allow_html=True
+)
 
 # For extra gap
-for _ in range(4):
+for _ in range(2):
     st.write("")
 
-# Creator's name
+# === Footer ===
+
 st.markdown("<p style='text-align: center'>By <b>Mevan</b></p>", unsafe_allow_html=True)
