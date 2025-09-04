@@ -1,4 +1,4 @@
-torch --index-url https://download.pytorch.org/whl/cu129
-torchvision --index-url https://download.pytorch.org/whl/cu129
+torch==2.8.0
+torchvision==0.23.0
 matplotlib==3.10.5
 streamlit==1.49.0
